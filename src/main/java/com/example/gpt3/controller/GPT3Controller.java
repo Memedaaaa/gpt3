@@ -1,14 +1,16 @@
 package com.example.gpt3.controller;
 
+import com.xiaoleilu.hutool.http.Header;
 import com.xiaoleilu.hutool.http.HttpRequest;
 import com.xiaoleilu.hutool.json.JSONArray;
 import com.xiaoleilu.hutool.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.annotation.HttpConstraint;
+import javax.servlet.http.HttpServletRequest;
 
 @RequestMapping("/openai")
 @RestController
@@ -29,8 +31,13 @@ public class GPT3Controller {
     @Value("${gpt.presence_penalty}")
     private Integer presence_penalty;
     @RequestMapping("/send")
-    public String send(@RequestParam String request){
+    public String send(@RequestParam String request, HttpServletRequest httpServletRequest
+            , @RequestHeader("User-Agent") String userAgent){
         logger.info("请求报文：{}",request);
+        logger.info("客户端IP：{}",httpServletRequest.getRemoteAddr());
+        logger.info("客户端端口：{}",httpServletRequest.getRemotePort());
+        logger.info("客户端主机：{}",httpServletRequest.getRemoteHost());
+        logger.info("客户端浏览器信息：{}",httpServletRequest.getHeader("User-Agent"));
         JSONObject json = new JSONObject();
         json.put("model",model);
         json.put("prompt",request);
